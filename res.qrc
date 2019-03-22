@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="left">left2.png</file>
+        <file alias="right">right2.png</file>
+    </qresource>
+</RCC>
