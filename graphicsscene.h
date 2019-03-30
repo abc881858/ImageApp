@@ -4,7 +4,7 @@
 #include <QGraphicsScene>
 #include <QPixmap>
 #include <QGraphicsPixmapItem>
-#include "mygraphicsrectitem.h"
+#include "graphicsrectitem.h"
 
 class GraphicsScene : public QGraphicsScene
 {
@@ -21,14 +21,13 @@ public:
     void showTwoLine(QPointF p);
     void hideTwoLine(QPointF p);
 
-    MyGraphicsRectItem *current;
+    GraphicsRectItem *current;
     bool isPressed;
 
 signals:
     void resizePixmap();
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
 };
