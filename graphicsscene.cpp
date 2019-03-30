@@ -4,7 +4,7 @@
 GraphicsScene::GraphicsScene(QObject *parent) : QGraphicsScene(parent)
 {
     isPressed = false;
-//    pixmapItem
+    pixmapItem = nullptr;
 }
 
 void GraphicsScene::addImage(QString fileName)
@@ -32,31 +32,11 @@ void GraphicsScene::hideTwoLine(QPointF p)
     line1->hide();
     line2->hide();
 
-    MyGraphicsRectItem *item = new MyGraphicsRectItem(QRectF(p.x(),p.y(),0,0));
+    GraphicsRectItem *item = new GraphicsRectItem(QRectF(p.x(),p.y(),0,0));
     addItem(item);
-    connect(item, &MyGraphicsRectItem::hover_enter,  [=](){current = item;});
-//    connect(item, &MyGraphicsRectItem::hover_leave,  [=](){current = nullptr;});
+    connect(item, &GraphicsRectItem::hover_enter,  [=](){current = item;});
+    //    connect(item, &GraphicsRectItem::hover_leave,  [=](){current = nullptr;});
     current = item;
-}
-
-void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
-{
-    if (mouseEvent->button() != Qt::LeftButton)
-        return;
-
-    if(current != nullptr)
-    {
-        if(current->grabbersAreCreated())
-        {
-            if(current->checkCornerGrabbers() != -1)
-            {
-                isPressed = true;
-            }
-//            else {
-//                current->setFlag(QGraphicsItem::ItemIsMovable);
-//            }
-        }
-    }
 }
 
 void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -91,26 +71,23 @@ void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
         switch(current->checkCornerGrabbers())
         {
-            case CornerGrabber::bottomLeft:
-                current->setRect(QRectF(QPointF(px<x2?px:x2,y1),QPointF(x2,py>y1?py:y1)));
-                break;
-            case CornerGrabber::topLeft:
-                current->setRect(QRectF(QPointF(px<x2?px:x2,py<y2?py:y2),QPointF(x2,y2)));
-                break;
-            case CornerGrabber::topRight:
-                current->setRect(QRectF(QPointF(x1,py<y2?py:y2),QPointF(px>x1?px:x1,y2)));
-                break;
-            case CornerGrabber::bottomRight:
-                current->setRect(QRectF(QPointF(x1,y1),QPointF(px>x1?px:x1,py>y1?py:y1)));
-                break;
+        case CornerGrabber::bottomLeft:
+            current->setRect(QRectF(QPointF(px<x2?px:x2,y1),QPointF(x2,py>y1?py:y1)));
+            break;
+        case CornerGrabber::topLeft:
+            current->setRect(QRectF(QPointF(px<x2?px:x2,py<y2?py:y2),QPointF(x2,y2)));
+            break;
+        case CornerGrabber::topRight:
+            current->setRect(QRectF(QPointF(x1,py<y2?py:y2),QPointF(px>x1?px:x1,y2)));
+            break;
+        case CornerGrabber::bottomRight:
+            current->setRect(QRectF(QPointF(x1,y1),QPointF(px>x1?px:x1,py>y1?py:y1)));
+            break;
         }
         current->setCornerPositions();
         current->setLinePosition();
         current->update();
     }
-
-//    QGraphicsItem *item = itemAt(event->scenePos(), QTransform());
-//    item
 
     QGraphicsScene::mouseMoveEvent(event);
 }
