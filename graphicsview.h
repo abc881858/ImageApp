@@ -10,8 +10,8 @@ class GraphicsView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    explicit GraphicsView(QWidget *parent = nullptr);
-    GraphicsScene *scene;
+    explicit GraphicsView(GraphicsScene *scene, QWidget *parent = Q_NULLPTR);
+
     void zoom(qreal scaleFactor);
     void original();
     bool step1;
@@ -20,7 +20,7 @@ public:
 
     QDialog *dialog;
     QLineEdit *edit;
-    
+
 protected:
     void keyReleaseEvent(QKeyEvent *event);
     void wheelEvent(QWheelEvent *e);
@@ -29,6 +29,7 @@ protected:
 
 private:
     qreal m_zoomDelta;
+    GraphicsScene *_scene;
 
 };
 
