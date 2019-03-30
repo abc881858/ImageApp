@@ -1,18 +1,14 @@
 #include "graphicsview.h"
 #include <QKeyEvent>
-#include <QFileDialog>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QListWidget>
-#include "net.h"
 
-GraphicsView::GraphicsView(QWidget *parent) : QGraphicsView(parent), step1(false), step2(false), step3(false)
+GraphicsView::GraphicsView(GraphicsScene *scene, QWidget *parent)
+    : QGraphicsView(scene, parent), step1(false), step2(false), step3(false), _scene(scene)
 {
     m_zoomDelta = 0.1;
-    scene = new GraphicsScene;
-    scene->setSceneRect(0,0,2000,1200);
-    setScene(scene);
 
     setMouseTracking(true);
 
@@ -21,7 +17,7 @@ GraphicsView::GraphicsView(QWidget *parent) : QGraphicsView(parent), step1(false
     edit = new QLineEdit;
     layout->addWidget(edit);
     QPushButton *ok = new QPushButton("OK");
-    connect(ok,&QPushButton::clicked,[=](){dialog->hide();edit->clear();/*scene->current->setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);*/});
+    connect(ok,&QPushButton::clicked,[=](){dialog->hide();edit->clear();});
     QPushButton *cancle = new QPushButton("Cancel");
     QHBoxLayout *layout2 = new QHBoxLayout;
     layout2->addWidget(ok);
@@ -61,56 +57,20 @@ void GraphicsView::keyReleaseEvent(QKeyEvent *event)
 {
     if(event->key() == Qt::Key_V)
     {
-        scene->current->changeVisiable();
+        _scene->current->changeVisiable();
     }
     if(event->key() == Qt::Key_X)
     {
-        scene->current->changePixmap();
+        _scene->current->changePixmap();
     }
     if(event->key() == Qt::Key_Z)
     {
-        scene->current->line->moveBy(-2,0);
+        _scene->current->line->moveBy(-2,0);
     }
     if(event->key() == Qt::Key_C)
     {
-        scene->current->line->moveBy(2,0);
+        _scene->current->line->moveBy(2,0);
     }
-
-    if(event->key()==Qt::Key_F)
-    {
-        if(!scene->pixmap.isNull())
-        {
-            return;
-        }
-        //Open File
-        QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "/home/wu", tr("Images (*.png *.xpm *.jpg)"));
-        scene->addImage(fileName);
-        centerOn(0,0);
-    }
-    else if(event->key()==Qt::Key_R)
-    {
-        original();
-        centerOn(scene->pixmapItem);
-    }
-    else if(event->key()==Qt::Key_O)
-    {
-        //Open Dir
-//        QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), "/home/wu", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-    }
-    else if(event->key()==Qt::Key_A)
-    {
-        if(scene->pixmapItem==nullptr)
-        {
-            return;
-        }
-        step1 = true;
-    }
-
-    else if(event->key()==Qt::Key_K)
-    {
-        qNet->writeRedis();
-    }
-
     else if(event->key()==Qt::Key_F11)
     {
         if(isMaximized())
@@ -130,17 +90,17 @@ void GraphicsView::mouseMoveEvent(QMouseEvent *event)
     if(step1)
     {
         setCursor(Qt::CrossCursor);
-        scene->showTwoLine(mapToScene(event->pos()));
+        _scene->showTwoLine(mapToScene(event->pos()));
     }
     if(step2)
     {
-        qreal x = scene->current->rect().x();
-        qreal y = scene->current->rect().y();
+        qreal x = _scene->current->rect().x();
+        qreal y = _scene->current->rect().y();
         qreal nx = mapToScene(event->pos()).x();
         qreal ny = mapToScene(event->pos()).y();
         qreal w = nx - x;
         qreal h = ny - y;
-        scene->current->setRect(x, y, w, h);
+        _scene->current->setRect(x, y, w, h);
         step3 = true;
     }
     QGraphicsView::mouseMoveEvent(event);
@@ -150,7 +110,7 @@ void GraphicsView::mousePressEvent(QMouseEvent *event)
 {
     if(step1)
     {
-        scene->hideTwoLine(mapToScene(event->pos()));
+        _scene->hideTwoLine(mapToScene(event->pos()));
         step1 = false;
         step2 = true;
     }
@@ -162,7 +122,7 @@ void GraphicsView::mousePressEvent(QMouseEvent *event)
 
         dialog->move(mapToScene(event->pos()).x(),mapToScene(event->pos()).y());
         dialog->show();
-        scene->current->createGrabbers();
+        _scene->current->createGrabbers();
     }
     QGraphicsView::mousePressEvent(event);
 }
