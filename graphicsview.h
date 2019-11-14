@@ -5,32 +5,43 @@
 #include "graphicsscene.h"
 #include <QDialog>
 #include <QLineEdit>
+#include <QLabel>
+#include <QDir>
+#include <QComboBox>
 
 class GraphicsView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    explicit GraphicsView(GraphicsScene *scene, QWidget *parent = Q_NULLPTR);
-
-    void zoom(qreal scaleFactor);
-    void original();
+    explicit GraphicsView(QWidget *parent = nullptr);
+    GraphicsScene *scene;
     bool step1;
     bool step2;
     bool step3;
 
+    QString openJsonName;
+
     QDialog *dialog;
-    QLineEdit *edit;
+    QLabel *nameLabel;
+    QComboBox *nameEdit;
+    QLabel *occludedLabel;
+    QLineEdit *occludedEdit;
+    QLabel *truncatedLabel;
+    QLineEdit *truncatedEdit;
+    QLabel *ignoreLabel;
+    QLineEdit *ignoreEdit;
+    QLabel *difficultLabel;
+    QLineEdit *difficultEdit;
 
 protected:
     void keyReleaseEvent(QKeyEvent *event);
-    void wheelEvent(QWheelEvent *e);
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
 
 private:
-    qreal m_zoomDelta;
-    GraphicsScene *_scene;
-
+    QStringList m_imgList;
+    int m_index{0};
+    QDir dir;
 };
 
 #endif // GRAPHICSVIEW_H
