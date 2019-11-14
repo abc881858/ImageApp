@@ -1,12 +1,10 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2019-03-28T20:21:00
+# Project created by QtCreator 2019-03-08T13:46:03
 #
 #-------------------------------------------------
 
-QT += core gui
-QT += widgets
-#QT += opengl
+QT += core gui widgets
 
 TARGET = ImageApp
 TEMPLATE = app
@@ -17,21 +15,13 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
     graphicsview.cpp \
     graphicsscene.cpp \
-    graphicsrectitem.cpp \
+    mygraphicsrectitem.cpp \
     cornergrabber.cpp
 
 HEADERS += \
-        mainwindow.h \
     graphicsview.h \
     graphicsscene.h \
-    graphicsrectitem.h \
+    mygraphicsrectitem.h \
     cornergrabber.h
-
-FORMS += \
-        mainwindow.ui
-
-RESOURCES += \
-    res.qrc
