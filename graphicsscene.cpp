@@ -4,7 +4,6 @@
 GraphicsScene::GraphicsScene(QObject *parent) : QGraphicsScene(parent)
 {
     isPressed = false;
-    pixmapItem = nullptr;
 }
 
 void GraphicsScene::addImage(QString fileName)
@@ -32,15 +31,42 @@ void GraphicsScene::hideTwoLine(QPointF p)
     line1->hide();
     line2->hide();
 
-    GraphicsRectItem *item = new GraphicsRectItem(QRectF(p.x(),p.y(),0,0));
+    MyGraphicsRectItem *item = new MyGraphicsRectItem(QRectF(p.x(),p.y(),0,0));
     addItem(item);
-    connect(item, &GraphicsRectItem::hover_enter,  [=](){current = item;});
-    //    connect(item, &GraphicsRectItem::hover_leave,  [=](){current = nullptr;});
+    connect(item, &MyGraphicsRectItem::hover_enter,  [=](){current = item;});
+    //    connect(item, &MyGraphicsRectItem::hover_leave,  [=](){current = nullptr;});
     current = item;
+
+    groupItems << item;
+}
+
+void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
+{
+    if(pixmap.isNull())
+    {
+        return;
+    }
+    if (mouseEvent->button() != Qt::LeftButton)
+        return;
+
+    if(current != nullptr)
+    {
+        if(current->grabbersAreCreated())
+        {
+            if(current->checkCornerGrabbers() != -1)
+            {
+                isPressed = true;
+            }
+        }
+    }
 }
 
 void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    if(pixmap.isNull())
+    {
+        return;
+    }
     if(isPressed)
     {
         qreal x1 = current->rect().x();
@@ -85,7 +111,6 @@ void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             break;
         }
         current->setCornerPositions();
-        current->setLinePosition();
         current->update();
     }
 
@@ -94,6 +119,10 @@ void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
+    if(pixmap.isNull())
+    {
+        return;
+    }
     if (mouseEvent->button() != Qt::LeftButton)
         return;
     isPressed = false;
