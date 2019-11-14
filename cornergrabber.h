@@ -1,12 +1,8 @@
 #ifndef CORNERGRABBER_H
 #define CORNERGRABBER_H
 
-#include <QObject>
 #include <QGraphicsItem>
-#include <QGraphicsRectItem>
-#include <QGraphicsTextItem>
 #include <QGraphicsSceneHoverEvent>
-#include <QGraphicsSceneMouseEvent>
 #include <QColor>
 #include <QPainter>
 #include <QPen>
