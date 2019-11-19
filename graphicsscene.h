@@ -13,6 +13,10 @@ public:
     explicit GraphicsScene(QObject *parent = nullptr);
     void addImage(QString fileName);
 
+    bool step1{false};
+    bool step2{false};
+    bool step3{false};
+
     QPixmap pixmap;
     QGraphicsPixmapItem *pixmapItem;
     QGraphicsLineItem *line1;
