@@ -7,7 +7,7 @@
 #include <QListWidget>
 #include <QFormLayout>
 
-GraphicsView::GraphicsView(QWidget *parent) : QGraphicsView(parent), step1(false), step2(false), step3(false)
+GraphicsView::GraphicsView(QWidget *parent) : QGraphicsView(parent)
 {
     scene = new GraphicsScene;
     scene->setSceneRect(0,0,2000,1200);
@@ -113,7 +113,8 @@ void GraphicsView::keyReleaseEvent(QKeyEvent *event)
         {
             return;
         }
-        step1 = true;
+        scene->step1 = true;
+        setCursor(Qt::CrossCursor);
     }
     else if(event->key()==Qt::Key_F11)
     {
@@ -129,52 +130,14 @@ void GraphicsView::keyReleaseEvent(QKeyEvent *event)
     QGraphicsView::keyReleaseEvent(event);
 }
 
-void GraphicsView::mouseMoveEvent(QMouseEvent *event)
-{
-    if(scene->pixmap.isNull())
-    {
-        return;
-    }
-    if(step1)
-    {
-        setCursor(Qt::CrossCursor);
-        scene->showTwoLine(mapToScene(event->pos()));
-    }
-    if(step2)
-    {
-        qreal x = scene->current->rect().x();
-        qreal y = scene->current->rect().y();
-        qreal nx = mapToScene(event->pos()).x();
-        qreal ny = mapToScene(event->pos()).y();
-        qreal w = nx - x;
-        qreal h = ny - y;
-        scene->current->setRect(x, y, w, h);
-        step3 = true;
-    }
-    QGraphicsView::mouseMoveEvent(event);
-}
-
 void GraphicsView::mousePressEvent(QMouseEvent *event)
 {
-    if(scene->pixmap.isNull())
+    if(scene->step3)
     {
-        return;
-    }
-    if(step1)
-    {
-        scene->hideTwoLine(mapToScene(event->pos()));
-        step1 = false;
-        step2 = true;
-    }
-    if(step3)
-    {
-        step2 = false;
-        step3 = false;
         setCursor(Qt::ArrowCursor);
-
-        dialog->move(mapToScene(event->pos()).toPoint());
+        QPointF p = mapToScene(event->pos());
+        dialog->move(p.toPoint());
         dialog->show();
-        scene->current->createGrabbers();
     }
     QGraphicsView::mousePressEvent(event);
 }
