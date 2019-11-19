@@ -16,8 +16,6 @@ public:
     explicit GraphicsView(QWidget *parent = nullptr);
     GraphicsScene *scene;
 
-    QString openJsonName;
-
     QDialog *dialog;
     QLabel *nameLabel;
     QComboBox *nameEdit;
