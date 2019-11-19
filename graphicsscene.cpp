@@ -1,5 +1,6 @@
 #include "graphicsscene.h"
 #include <QGraphicsView>
+#include <QGraphicsSceneMouseEvent>
 
 GraphicsScene::GraphicsScene(QObject *parent) : QGraphicsScene(parent)
 {
@@ -34,7 +35,6 @@ void GraphicsScene::hideTwoLine(QPointF p)
     MyGraphicsRectItem *item = new MyGraphicsRectItem(QRectF(p.x(),p.y(),0,0));
     addItem(item);
     connect(item, &MyGraphicsRectItem::hover_enter,  [=](){current = item;});
-    //    connect(item, &MyGraphicsRectItem::hover_leave,  [=](){current = nullptr;});
     current = item;
 
     groupItems << item;
@@ -47,8 +47,22 @@ void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
         return;
     }
     if (mouseEvent->button() != Qt::LeftButton)
+    {
         return;
+    }
 
+    if(step1)
+    {
+        hideTwoLine(mouseEvent->scenePos());
+        step1 = false;
+        step2 = true;
+    }
+    if(step3)
+    {
+        step2 = false;
+        step3 = false;
+        current->createGrabbers();
+    }
     if(current != nullptr)
     {
         if(current->grabbersAreCreated())
@@ -66,6 +80,21 @@ void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if(pixmap.isNull())
     {
         return;
+    }
+    if(step1)
+    {
+        showTwoLine(event->scenePos());
+    }
+    if(step2)
+    {
+        qreal x = current->rect().x();
+        qreal y = current->rect().y();
+        qreal nx = event->scenePos().x();
+        qreal ny = event->scenePos().y();
+        qreal w = nx - x;
+        qreal h = ny - y;
+        current->setRect(x, y, w, h);
+        step3 = true;
     }
     if(isPressed)
     {
@@ -124,7 +153,9 @@ void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
         return;
     }
     if (mouseEvent->button() != Qt::LeftButton)
+    {
         return;
+    }
     isPressed = false;
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
 }
