@@ -5,11 +5,7 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QListWidget>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
 #include <QFormLayout>
-#include <QMessageBox>
 
 GraphicsView::GraphicsView(QWidget *parent) : QGraphicsView(parent), step1(false), step2(false), step3(false)
 {
