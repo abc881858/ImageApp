@@ -15,9 +15,6 @@ class GraphicsView : public QGraphicsView
 public:
     explicit GraphicsView(QWidget *parent = nullptr);
     GraphicsScene *scene;
-    bool step1;
-    bool step2;
-    bool step3;
 
     QString openJsonName;
 
@@ -35,13 +32,8 @@ public:
 
 protected:
     void keyReleaseEvent(QKeyEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
 
-private:
-    QStringList m_imgList;
-    int m_index{0};
-    QDir dir;
 };
 
 #endif // GRAPHICSVIEW_H
